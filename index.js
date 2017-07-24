@@ -1,10 +1,23 @@
 "use strict";
 
+var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
 var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; };
 
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
 /*
-* 
-*/
+ * Created with Visual Studio Code.
+ * github: https://github.com/tianxiangbing/data-merge
+ * User: 田想兵
+ * Date: 2017-07-21
+ * Time: 20:00:00
+ * Contact: 55342775@qq.com
+ * desc: 主旨是对某一时间段里的数据进行合并，重复的记录进行去重，只取最新的记录。比如一秒钟来了1000条数据，其中有500条是重复的，那这一秒钟应该只返回500条结果。
+ * 请使用https://github.com/tianxiangbing/data-merge 上的代码
+ */
 (function (definition) {
     // 
     if ((typeof exports === "undefined" ? "undefined" : _typeof(exports)) === "object") {
@@ -18,6 +31,87 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 })(function () {
     "use strict";
 
-    var DataMerge = function DataMerge() {};
+    var DataMerge = function () {
+        function DataMerge() {
+            _classCallCheck(this, DataMerge);
+
+            this.count = 0;
+            this.mergecount = 0;
+        }
+
+        _createClass(DataMerge, [{
+            key: "init",
+            value: function init(settings) {
+                this.ss = _extends({ data: [], time: 1000, callback: function callback() {}, mergeKey: '', mode: 'merge' }, settings);
+                this.count = this.ss.data.length;
+                this.setTimer();
+            }
+        }, {
+            key: "reset",
+            value: function reset() {
+                //重置数据
+                this.ss.data = null;
+                this.ss.data = [];
+                this.count = 0;
+                this.mergecount = 0;
+            }
+        }, {
+            key: "setTimer",
+            value: function setTimer() {
+                var _this = this;
+
+                var st = setTimeout(function () {
+                    _this.ss.callback(_this.ss.data, _this.count, _this.mergecount);
+                    clearTimeout(st);
+                    _this.reset();
+                    _this.setTimer();
+                }, this.ss.time);
+            }
+        }, {
+            key: "merge",
+            value: function merge(md) {
+                var _this2 = this;
+
+                if (md.constructor !== Array) {
+                    md = [md];
+                }
+                this.count += md.length;
+                if (this.ss.mode === 'merge') {
+                    //合并模式
+                    this.ss.data = this.ss.data.concat(md);
+                } else if (this.ss.mode === 'de-duplication') {
+                    //去重模式
+                    var mergeKey = this.ss.mergeKey;
+                    md.forEach(function (item) {
+                        var ismerge = false;
+                        _this2.ss.data.forEach(function (sitem, index) {
+                            if (sitem === item || mergeKey && _this2._checkKey(mergeKey, sitem, item)) {
+                                _this2.ss.data[index] = item;
+                                ismerge = true;
+                                _this2.mergecount++;
+                            }
+                        });
+                        if (!ismerge) {
+                            _this2.ss.data.push(item);
+                        }
+                    });
+                }
+            }
+        }, {
+            key: "_checkKey",
+            value: function _checkKey(mergeKey, sitem, item) {
+                var returnvalue = true;
+                mergeKey.forEach(function (key) {
+                    if (item[key] !== sitem[key]) {
+                        returnvalue = false;
+                    }
+                });
+                return returnvalue;
+            }
+        }]);
+
+        return DataMerge;
+    }();
+
     return DataMerge;
 });
