@@ -12,25 +12,75 @@
     // 
     if (typeof exports === "object") {
         module.exports = definition();
-    // RequireJS
+        // RequireJS
     } else if (typeof define === "function" && define.amd) {
         define(definition);
-    }  else {
+    } else {
         DataMerge = definition();
     }
 
 })(function () {
     "use strict";
-    let DataMerge ={
-        init(settings){
-            this.ss = Object.assign({data:[],time:1000,callback:()=>{},mergeKey:''}, settings);
-            setTimeout(()=>{
-                
-            },this.ss.time);
-        },
-        merge(md){
-            ss.data.concat(md)
+    class DataMerge {
+        constructor() {
+            this.count = 0;
+            this.mergecount = 0;
         }
-    };
+        init(settings) {
+            this.ss = Object.assign({ data: [], time: 1000, callback: () => { }, mergeKey: '', mode: 'merge' }, settings);
+            this.count = this.ss.data.length;
+            this.setTimer();
+        }
+        reset() {
+            //重置数据
+            this.ss.data = null;
+            this.ss.data = [];
+            this.count = 0;
+            this.mergecount = 0;
+        }
+        setTimer() {
+            let st = setTimeout(() => {
+                this.ss.callback(this.ss.data, this.count, this.mergecount)
+                clearTimeout(st);
+                this.reset();
+                this.setTimer();
+            }, this.ss.time);
+        }
+        merge(md) {
+            if (md.constructor !== Array) {
+                md = [md];
+            }
+            this.count += md.length;
+            if (this.ss.mode === 'merge') {
+                //合并模式
+                this.ss.data = this.ss.data.concat(md);
+            } else if (this.ss.mode === 'de-duplication') {
+                //去重模式
+                let mergeKey = this.ss.mergeKey;
+                md.forEach(item => {
+                    let ismerge = false;
+                    this.ss.data.forEach((sitem, index) => {
+                        if (sitem === item || (mergeKey && this._checkKey(mergeKey, sitem, item))) {
+                            this.ss.data[index] = item;
+                            ismerge = true;
+                            this.mergecount++;
+                        }
+                    });
+                    if (!ismerge) {
+                        this.ss.data.push(item);
+                    }
+                })
+            }
+        }
+        _checkKey(mergeKey, sitem, item) {
+            let returnvalue = true;
+            mergeKey.forEach(key=>{
+                if( item[key] !== sitem [key]){
+                    returnvalue = false;
+                }
+            })
+            return returnvalue;
+        }
+    }
     return DataMerge;
 });
