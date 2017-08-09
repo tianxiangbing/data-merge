@@ -40,8 +40,8 @@
         }
         setTimer() {
             let st = setTimeout(() => {
-                this.ss.callback(this.ss.data, this.count, this.mergecount)
                 clearTimeout(st);
+                this.ss.callback(this.ss.data, this.count, this.mergecount)
                 this.reset();
                 this.setTimer();
             }, this.ss.time);

@@ -61,8 +61,8 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
                 var _this = this;
 
                 var st = setTimeout(function () {
-                    _this.ss.callback(_this.ss.data, _this.count, _this.mergecount);
                     clearTimeout(st);
+                    _this.ss.callback(_this.ss.data, _this.count, _this.mergecount);
                     _this.reset();
                     _this.setTimer();
                 }, this.ss.time);
