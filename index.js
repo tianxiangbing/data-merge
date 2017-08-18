@@ -70,7 +70,7 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
                 var st = setTimeout(function () {
                     clearTimeout(st);
                     var data = [];
-                    if (_this.mergeType === 'json') {
+                    if (_this.ss.mergeType === 'json') {
                         for (var k in _this.base) {
                             data.push(_this.base[k]);
                         }

@@ -48,7 +48,7 @@
             let st = setTimeout(() => {
                 clearTimeout(st);
                 let data = [];
-                if (this.mergeType === 'json') {
+                if (this.ss.mergeType === 'json') {
                     for (let k in this.base) {
                         data.push(this.base[k]);
                     }
