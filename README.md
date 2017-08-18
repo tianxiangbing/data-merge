@@ -34,6 +34,8 @@ setInterval(function(){
     初始化的数组，注意如果初始化的数据就有重复的，将不会去重。
 ### time:`Int`
     合并的时间段，毫秒数。默认合并1000毫秒内的数据
+### mergeType:`'json'`
+    合并类型，默认采用json转化为key的方式去重，将大大优化合并的效率
 ### mergeKey:`String`
     当传递这个参数，并且`mode`是`de-duplication` ,将判断`mergeKey`这个字段里的值相等时也作合并。记录是json对象的时候有用。不传这个值 ，只作全等于`===`判断。
 ### mode: `merge` | `de-duplication`

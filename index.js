@@ -37,13 +37,19 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
 
             this.count = 0;
             this.mergecount = 0;
+            this.base = {};
         }
 
         _createClass(DataMerge, [{
             key: "init",
             value: function init(settings) {
-                this.ss = _extends({ data: [], time: 1000, callback: function callback() {}, mergeKey: '', mode: 'merge' }, settings);
+                this.ss = _extends({ data: [], time: 1000, callback: function callback() {}, mergeKey: '', mode: 'merge', mergeType: 'json' }, settings);
                 this.count = this.ss.data.length;
+                if (this.count) {
+                    for (var i = 0, l = this.count; i < l; i++) {
+                        this.base[this.ss.data[i][this.ss.mergeKey]] = this.ss.data[i];
+                    }
+                }
                 this.setTimer();
             }
         }, {
@@ -62,7 +68,15 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
 
                 var st = setTimeout(function () {
                     clearTimeout(st);
-                    _this.ss.callback(_this.ss.data, _this.count, _this.mergecount);
+                    var data = [];
+                    if (_this.mergeType === 'json') {
+                        for (var k in _this.base) {
+                            data.push(_this.base[k]);
+                        }
+                    } else {
+                        data = _this.ss.data;
+                    }
+                    _this.ss.callback(data, _this.count, _this.mergecount);
                     _this.reset();
                     _this.setTimer();
                 }, this.ss.time);
@@ -70,6 +84,15 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
         }, {
             key: "merge",
             value: function merge(md) {
+                if (this.ss.mergeType === 'json') {
+                    this.merge2(md);
+                } else {
+                    this.merge1(md);
+                }
+            }
+        }, {
+            key: "merge1",
+            value: function merge1(md) {
                 var _this2 = this;
 
                 if (md.constructor !== Array) {
@@ -94,6 +117,40 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
                         });
                         if (!ismerge) {
                             _this2.ss.data.push(item);
+                        }
+                    });
+                }
+            }
+        }, {
+            key: "merge2",
+            value: function merge2(md) {
+                var _this3 = this;
+
+                if (md.constructor !== Array) {
+                    md = [md];
+                }
+                this.count += md.length;
+                if (this.ss.mode === 'merge') {
+                    //合并模式
+                    this.ss.data = this.ss.data.concat(md);
+                } else if (this.ss.mode === 'de-duplication') {
+                    //去重模式
+                    var mergeKey = this.ss.mergeKey;
+                    md.forEach(function (item) {
+                        var ismerge = false;
+                        // this.ss.data.forEach((sitem, index) => {
+                        //     if (sitem === item || (mergeKey &&  sitem[mergeKey] === item[mergeKey])) {
+                        //         this.ss.data[index] = item;
+                        //         ismerge = true;
+                        //         this.mergecount++;
+                        //         return false;
+                        //     }
+                        // });
+                        if (_this3.base.hasOwnProperty(item[mergeKey])) {
+                            _this3.mergecount++;
+                            _this3.base[item[mergeKey]] = item;
+                        } else {
+                            _this3.base[item[mergeKey]] = item;
                         }
                     });
                 }
