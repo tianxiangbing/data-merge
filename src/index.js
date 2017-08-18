@@ -42,6 +42,7 @@
             this.ss.data = [];
             this.count = 0;
             this.mergecount = 0;
+            this.base = {};
         }
         setTimer() {
             let st = setTimeout(() => {

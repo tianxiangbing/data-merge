@@ -60,6 +60,7 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
                 this.ss.data = [];
                 this.count = 0;
                 this.mergecount = 0;
+                this.base = {};
             }
         }, {
             key: "setTimer",
