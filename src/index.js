@@ -18,7 +18,6 @@
     } else {
         DataMerge = definition();
     }
-
 })(function () {
     "use strict";
     class DataMerge {
@@ -60,10 +59,11 @@
                 md.forEach(item => {
                     let ismerge = false;
                     this.ss.data.forEach((sitem, index) => {
-                        if (sitem === item || (mergeKey && this._checkKey(mergeKey, sitem, item))) {
+                        if (sitem === item || (mergeKey &&  sitem[mergeKey] === item[mergeKey])) {
                             this.ss.data[index] = item;
                             ismerge = true;
                             this.mergecount++;
+                            return false;
                         }
                     });
                     if (!ismerge) {
@@ -71,15 +71,6 @@
                     }
                 })
             }
-        }
-        _checkKey(mergeKey, sitem, item) {
-            let returnvalue = true;
-            mergeKey.forEach(key=>{
-                if( item[key] !== sitem [key]){
-                    returnvalue = false;
-                }
-            })
-            return returnvalue;
         }
     }
     return DataMerge;

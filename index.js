@@ -85,10 +85,11 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
                     md.forEach(function (item) {
                         var ismerge = false;
                         _this2.ss.data.forEach(function (sitem, index) {
-                            if (sitem === item || mergeKey && _this2._checkKey(mergeKey, sitem, item)) {
+                            if (sitem === item || mergeKey && sitem[mergeKey] === item[mergeKey]) {
                                 _this2.ss.data[index] = item;
                                 ismerge = true;
                                 _this2.mergecount++;
+                                return false;
                             }
                         });
                         if (!ismerge) {
@@ -96,17 +97,6 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
                         }
                     });
                 }
-            }
-        }, {
-            key: "_checkKey",
-            value: function _checkKey(mergeKey, sitem, item) {
-                var returnvalue = true;
-                mergeKey.forEach(function (key) {
-                    if (item[key] !== sitem[key]) {
-                        returnvalue = false;
-                    }
-                });
-                return returnvalue;
             }
         }]);
 

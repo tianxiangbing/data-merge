@@ -3,7 +3,7 @@ let d1 = new DataMerge();
 d1.init({
     data: [],
     time: 10000,
-    mergeKey: ['id'],
+    mergeKey: 'id',
     // mode:'merge',
     mode: 'de-duplication',
     callback: function (data, count, mergecount) {
