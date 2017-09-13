@@ -27,10 +27,10 @@
             this.base = {};
         }
         init(settings) {
-            this.ss = Object.assign({ data: [], time: 1000, callback: () => { }, mergeKey: '', mode: 'merge', mergeType: 'json' }, settings);
+            this.ss = Object.assign({ data: [], time: 1000, callback: () => { }, mergeKey: '', mergeField: true, mode: 'merge', mergeType: 'json' }, settings);
             this.count = this.ss.data.length;
-            if(this.count){
-                for(let i = 0 ,l = this.count ; i< l; i ++){
+            if (this.count) {
+                for (let i = 0, l = this.count; i < l; i++) {
                     this.base[this.ss.data[i][this.ss.mergeKey]] = this.ss.data[i];
                 }
             }
@@ -47,6 +47,7 @@
         setTimer() {
             let st = setTimeout(() => {
                 clearTimeout(st);
+                st = null;
                 let data = [];
                 if (this.ss.mergeType === 'json') {
                     for (let k in this.base) {
@@ -61,13 +62,6 @@
             }, this.ss.time);
         }
         merge(md) {
-            if (this.ss.mergeType === 'json') {
-                this.merge2(md);
-            }else{
-                this.merge1(md);
-            }
-        }
-        merge1(md) {
             if (md.constructor !== Array) {
                 md = [md];
             }
@@ -78,46 +72,13 @@
             } else if (this.ss.mode === 'de-duplication') {
                 //去重模式
                 let mergeKey = this.ss.mergeKey;
+                let mergeField = this.ss.mergeField;
                 md.forEach(item => {
-                    let ismerge = false;
-                    this.ss.data.forEach((sitem, index) => {
-                        if (sitem === item || (mergeKey && sitem[mergeKey] === item[mergeKey])) {
-                            this.ss.data[index] = item;
-                            ismerge = true;
-                            this.mergecount++;
-                            return false;
-                        }
-                    });
-                    if (!ismerge) {
-                        this.ss.data.push(item);
-                    }
-                })
-            }
-        }
-        merge2(md) {
-            if (md.constructor !== Array) {
-                md = [md];
-            }
-            this.count += md.length;
-            if (this.ss.mode === 'merge') {
-                //合并模式
-                this.ss.data = this.ss.data.concat(md);
-            } else if (this.ss.mode === 'de-duplication') {
-                //去重模式
-                let mergeKey = this.ss.mergeKey;
-                md.forEach(item => {
-                    let ismerge = false;
-                    // this.ss.data.forEach((sitem, index) => {
-                    //     if (sitem === item || (mergeKey &&  sitem[mergeKey] === item[mergeKey])) {
-                    //         this.ss.data[index] = item;
-                    //         ismerge = true;
-                    //         this.mergecount++;
-                    //         return false;
-                    //     }
-                    // });
                     if (this.base.hasOwnProperty(item[mergeKey])) {
                         this.mergecount++;
-                        this.base[item[mergeKey]] = item;
+                        let base = this.base[item[mergeKey]];
+                        // this.base[item[mergeKey]] = item;
+                        mergeField ? Object.assign(base, item) : undefined;
                     } else {
                         this.base[item[mergeKey]] = item;
                     }

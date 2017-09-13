@@ -44,3 +44,5 @@ setInterval(function(){
     回调函数 ，第一个`data`是合并后的数据，`count`是总条数，`mergecount`是去重的数量，仅在`de-duplication`有值。
 ## merge :`function()`
     需要处理的数据，可以是json对象或基本类型数据。
+## mergeField:`bool`
+    是否合并字段，默认为true,否则则直接丢掉整条重复的数据。

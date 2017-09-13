@@ -43,7 +43,7 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
         _createClass(DataMerge, [{
             key: "init",
             value: function init(settings) {
-                this.ss = _extends({ data: [], time: 1000, callback: function callback() {}, mergeKey: '', mode: 'merge', mergeType: 'json' }, settings);
+                this.ss = _extends({ data: [], time: 1000, callback: function callback() {}, mergeKey: '', mergeField: true, mode: 'merge', mergeType: 'json' }, settings);
                 this.count = this.ss.data.length;
                 if (this.count) {
                     for (var i = 0, l = this.count; i < l; i++) {
@@ -69,6 +69,7 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
 
                 var st = setTimeout(function () {
                     clearTimeout(st);
+                    st = null;
                     var data = [];
                     if (_this.ss.mergeType === 'json') {
                         for (var k in _this.base) {
@@ -85,15 +86,6 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
         }, {
             key: "merge",
             value: function merge(md) {
-                if (this.ss.mergeType === 'json') {
-                    this.merge2(md);
-                } else {
-                    this.merge1(md);
-                }
-            }
-        }, {
-            key: "merge1",
-            value: function merge1(md) {
                 var _this2 = this;
 
                 if (md.constructor !== Array) {
@@ -106,52 +98,15 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
                 } else if (this.ss.mode === 'de-duplication') {
                     //去重模式
                     var mergeKey = this.ss.mergeKey;
+                    var mergeField = this.ss.mergeField;
                     md.forEach(function (item) {
-                        var ismerge = false;
-                        _this2.ss.data.forEach(function (sitem, index) {
-                            if (sitem === item || mergeKey && sitem[mergeKey] === item[mergeKey]) {
-                                _this2.ss.data[index] = item;
-                                ismerge = true;
-                                _this2.mergecount++;
-                                return false;
-                            }
-                        });
-                        if (!ismerge) {
-                            _this2.ss.data.push(item);
-                        }
-                    });
-                }
-            }
-        }, {
-            key: "merge2",
-            value: function merge2(md) {
-                var _this3 = this;
-
-                if (md.constructor !== Array) {
-                    md = [md];
-                }
-                this.count += md.length;
-                if (this.ss.mode === 'merge') {
-                    //合并模式
-                    this.ss.data = this.ss.data.concat(md);
-                } else if (this.ss.mode === 'de-duplication') {
-                    //去重模式
-                    var mergeKey = this.ss.mergeKey;
-                    md.forEach(function (item) {
-                        var ismerge = false;
-                        // this.ss.data.forEach((sitem, index) => {
-                        //     if (sitem === item || (mergeKey &&  sitem[mergeKey] === item[mergeKey])) {
-                        //         this.ss.data[index] = item;
-                        //         ismerge = true;
-                        //         this.mergecount++;
-                        //         return false;
-                        //     }
-                        // });
-                        if (_this3.base.hasOwnProperty(item[mergeKey])) {
-                            _this3.mergecount++;
-                            _this3.base[item[mergeKey]] = item;
+                        if (_this2.base.hasOwnProperty(item[mergeKey])) {
+                            _this2.mergecount++;
+                            var base = _this2.base[item[mergeKey]];
+                            // this.base[item[mergeKey]] = item;
+                            mergeField ? _extends(base, item) : undefined;
                         } else {
-                            _this3.base[item[mergeKey]] = item;
+                            _this2.base[item[mergeKey]] = item;
                         }
                     });
                 }
