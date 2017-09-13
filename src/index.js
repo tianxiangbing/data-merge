@@ -78,7 +78,11 @@
                         this.mergecount++;
                         let base = this.base[item[mergeKey]];
                         // this.base[item[mergeKey]] = item;
-                        mergeField ? Object.assign(base, item) : undefined;
+                        if (mergeField) {
+                            for (let k in item) {
+                                base[k] = item[k];
+                            }
+                        }
                     } else {
                         this.base[item[mergeKey]] = item;
                     }
