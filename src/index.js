@@ -23,11 +23,12 @@
     class DataMerge {
         constructor() {
             this.count = 0;
+            this.loading = false;
             this.mergecount = 0;
             this.base = {};
         }
         init(settings) {
-            this.ss = Object.assign({ data: [], time: 1000, callback: () => { }, mergeKey: '', mergeField: true, mode: 'merge', mergeType: 'json' }, settings);
+            this.ss = Object.assign({ data: [], time: 200, callback: () => { }, mergeKey: '', mergeField: true, mode: 'merge', mergeType: 'json' }, settings);
             this.count = this.ss.data.length;
             if (this.count) {
                 for (let i = 0, l = this.count; i < l; i++) {
@@ -43,6 +44,7 @@
             this.count = 0;
             this.mergecount = 0;
             this.base = {};
+            this.loading = false;
         }
         setTimer() {
             let st = setTimeout(() => {
@@ -58,35 +60,40 @@
                 }
                 this.ss.callback(data, this.count, this.mergecount)
                 this.reset();
-                this.setTimer();
             }, this.ss.time);
         }
         merge(md) {
             if (md.constructor !== Array) {
                 md = [md];
             }
-            this.count += md.length;
-            if (this.ss.mode === 'merge') {
-                //合并模式
-                this.ss.data = this.ss.data.concat(md);
-            } else if (this.ss.mode === 'de-duplication') {
-                //去重模式
-                let mergeKey = this.ss.mergeKey;
-                let mergeField = this.ss.mergeField;
-                md.forEach(item => {
-                    if (this.base.hasOwnProperty(item[mergeKey])) {
-                        this.mergecount++;
-                        let base = this.base[item[mergeKey]];
-                        // this.base[item[mergeKey]] = item;
-                        if (mergeField) {
-                            for (let k in item) {
-                                base[k] = item[k];
+            if (md.length > 0) {
+                this.count += md.length;
+                if (!this.loading) {
+                    this.loading = true;
+                    this.setTimer();
+                }
+                if (this.ss.mode === 'merge') {
+                    //合并模式
+                    this.ss.data = this.ss.data.concat(md);
+                } else if (this.ss.mode === 'de-duplication') {
+                    //去重模式
+                    let mergeKey = this.ss.mergeKey;
+                    let mergeField = this.ss.mergeField;
+                    md.forEach(item => {
+                        if (this.base.hasOwnProperty(item[mergeKey])) {
+                            this.mergecount++;
+                            let base = this.base[item[mergeKey]];
+                            // this.base[item[mergeKey]] = item;
+                            if (mergeField) {
+                                for (let k in item) {
+                                    base[k] = item[k];
+                                }
                             }
+                        } else {
+                            this.base[item[mergeKey]] = item;
                         }
-                    } else {
-                        this.base[item[mergeKey]] = item;
-                    }
-                });
+                    });
+                }
             }
         }
     }

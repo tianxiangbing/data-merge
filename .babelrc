@@ -1,4 +1,4 @@
 {
-  "presets": ["latest", "stage-2"],
-  "plugins": ["babel-plugin-transform-object-assign"]
+  "presets": ["latest", "stage-2",["es2015", { "modules": false }]],
+  "plugins": ["babel-plugin-transform-object-assign","transform-remove-strict-mode"]
 }
