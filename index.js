@@ -80,7 +80,6 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
                     }
                     _this.ss.callback(data, _this.count, _this.mergecount);
                     _this.reset();
-                    _this.setTimer();
                 }, this.ss.time);
             }
         }, {
