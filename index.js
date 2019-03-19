@@ -42,11 +42,25 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
         _createClass(DataMerge, [{
             key: "init",
             value: function init(settings) {
+                var _this = this;
+
                 this.ss = _extends({ data: [], time: 200, callback: function callback() {}, mergeKey: '', mergeField: true, mode: 'merge', mergeType: 'json' }, settings);
                 this.count = this.ss.data.length;
                 if (this.count) {
+                    var _loop = function _loop(i, l) {
+                        var key = '';
+                        if (_typeof(_this.ss.mergeKey) === 'object') {
+                            _this.ss.mergeKey.forEach(function (it) {
+                                key += _this.ss.data[i][it];
+                            });
+                        } else {
+                            key = _this.ss.data[i][_this.ss.mergeKey];
+                        }
+                        _this.base[key] = _this.ss.data[i];
+                    };
+
                     for (var i = 0, l = this.count; i < l; i++) {
-                        this.base[this.ss.data[i][this.ss.mergeKey]] = this.ss.data[i];
+                        _loop(i, l);
                     }
                 }
                 this.setTimer();
@@ -65,27 +79,27 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
         }, {
             key: "setTimer",
             value: function setTimer() {
-                var _this = this;
+                var _this2 = this;
 
                 var st = setTimeout(function () {
                     clearTimeout(st);
                     st = null;
                     var data = [];
-                    if (_this.ss.mergeType === 'json') {
-                        for (var k in _this.base) {
-                            data.push(_this.base[k]);
+                    if (_this2.ss.mergeType === 'json') {
+                        for (var k in _this2.base) {
+                            data.push(_this2.base[k]);
                         }
                     } else {
-                        data = _this.ss.data;
+                        data = _this2.ss.data;
                     }
-                    _this.ss.callback(data, _this.count, _this.mergecount);
-                    _this.reset();
+                    _this2.ss.callback(data, _this2.count, _this2.mergecount);
+                    _this2.reset();
                 }, this.ss.time);
             }
         }, {
             key: "merge",
             value: function merge(md) {
-                var _this2 = this;
+                var _this3 = this;
 
                 if (md.constructor !== Array) {
                     md = [md];
@@ -104,9 +118,17 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
                         var mergeKey = this.ss.mergeKey;
                         var mergeField = this.ss.mergeField;
                         md.forEach(function (item) {
-                            if (_this2.base.hasOwnProperty(item[mergeKey])) {
-                                _this2.mergecount++;
-                                var base = _this2.base[item[mergeKey]];
+                            var key = '';
+                            if (_typeof(_this3.ss.mergeKey) === 'object') {
+                                _this3.ss.mergeKey.forEach(function (it) {
+                                    key += item[it];
+                                });
+                            } else {
+                                key = item[_this3.ss.mergeKey];
+                            }
+                            if (_this3.base.hasOwnProperty(key)) {
+                                _this3.mergecount++;
+                                var base = _this3.base[key];
                                 // this.base[item[mergeKey]] = item;
                                 if (mergeField) {
                                     for (var k in item) {
@@ -114,8 +136,25 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
                                     }
                                 }
                             } else {
-                                _this2.base[item[mergeKey]] = item;
+                                _this3.base[key] = item;
                             }
+                        });
+                    } else if (this.ss.mode === 'over') {
+                        //覆盖模式
+                        var _mergeKey = this.ss.mergeKey;
+                        md.forEach(function (item) {
+                            var key = '';
+                            if (_typeof(_this3.ss.mergeKey) === 'object') {
+                                _this3.ss.mergeKey.forEach(function (it) {
+                                    key += item[it];
+                                });
+                            } else {
+                                key = item[_this3.ss.mergeKey];
+                            }
+                            if (_this3.base.hasOwnProperty(key)) {
+                                _this3.mergecount++;
+                            }
+                            _this3.base[key] = item;
                         });
                     }
                 }

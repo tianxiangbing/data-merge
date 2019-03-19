@@ -36,10 +36,10 @@ setInterval(function(){
     合并的时间段，毫秒数。默认合并1000毫秒内的数据
 ### mergeType:`'json'`
     合并类型，默认采用json转化为key的方式去重，将大大优化合并的效率
-### mergeKey:`String`
+### mergeKey:`String`|`Array`
     当传递这个参数，并且`mode`是`de-duplication` ,将判断`mergeKey`这个字段里的值相等时也作合并。记录是json对象的时候有用。不传这个值 ，只作全等于`===`判断。
-### mode: `merge` | `de-duplication`
-    `merge`合并数据,`de-duplication`对数据合并去重，去重的条件就是上面的`mergeKey`或者全等于了
+### mode: `merge` | `de-duplication` | `over`
+    `merge`合并数据,`de-duplication`对数据合并去重，去重的条件就是上面的`mergeKey`或者全等于了,`over`判断mergeKey相等时覆盖记录，此时mergeKey传数组.
 ### callback:`function(data,count,mergecount)`
     回调函数 ，第一个`data`是合并后的数据，`count`是总条数，`mergecount`是去重的数量，仅在`de-duplication`有值。
 ## merge :`function()`

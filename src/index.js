@@ -32,7 +32,15 @@
             this.count = this.ss.data.length;
             if (this.count) {
                 for (let i = 0, l = this.count; i < l; i++) {
-                    this.base[this.ss.data[i][this.ss.mergeKey]] = this.ss.data[i];
+                    let key = '';
+                    if(typeof this.ss.mergeKey ==='object'){
+                        this.ss.mergeKey.forEach(it=>{
+                            key += this.ss.data[i][it];
+                        });
+                    }else{
+                        key = this.ss.data[i][this.ss.mergeKey]
+                    }
+                    this.base[key] = this.ss.data[i];
                 }
             }
             this.setTimer();
@@ -80,9 +88,17 @@
                     let mergeKey = this.ss.mergeKey;
                     let mergeField = this.ss.mergeField;
                     md.forEach(item => {
-                        if (this.base.hasOwnProperty(item[mergeKey])) {
+                        let key = '';
+                        if(typeof this.ss.mergeKey ==='object'){
+                            this.ss.mergeKey.forEach(it=>{
+                                key += item[it];
+                            });
+                        }else{
+                            key = item[this.ss.mergeKey]
+                        }
+                        if (this.base.hasOwnProperty(key)) {
                             this.mergecount++;
-                            let base = this.base[item[mergeKey]];
+                            let base = this.base[key];
                             // this.base[item[mergeKey]] = item;
                             if (mergeField) {
                                 for (let k in item) {
@@ -90,8 +106,25 @@
                                 }
                             }
                         } else {
-                            this.base[item[mergeKey]] = item;
+                            this.base[key] = item;
                         }
+                    });
+                }else if(this.ss.mode ==='over'){
+                    //覆盖模式
+                    let mergeKey = this.ss.mergeKey;
+                    md.forEach(item => {
+                        let key = '';
+                        if(typeof this.ss.mergeKey ==='object'){
+                            this.ss.mergeKey.forEach(it=>{
+                                key += item[it];
+                            });
+                        }else{
+                            key = item[this.ss.mergeKey]
+                        }
+                        if (this.base.hasOwnProperty(key)) {
+                            this.mergecount++;
+                        }
+                        this.base[key] = item;
                     });
                 }
             }
