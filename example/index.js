@@ -1,7 +1,7 @@
 let DataMerge = require('../src/index');
 let d1 = new DataMerge();
 d1.init({
-    data: [{code:'aaa',under:"bbb",type:"fff",id:3}],
+    data: [],
     time: 1000,
     mergeKey: ['code','under','type'],
     // mode:'merge',
@@ -13,24 +13,25 @@ d1.init({
         console.log(count, mergecount);
     }
 });
-setTimeout(function () {
-    d1.merge({code:'aaa',under:"bbb",type:'ddd',id:1});
-}, 100)
-setTimeout(function () {
-    d1.merge({code:'aaa',under:"bbb",type:'fff',id:2});
-}, 100)
-setTimeout(function () {
-    d1.merge({code:'aaa',under:"ccc",type:'eee',id:3});
-}, 100)
-setTimeout(function () {
-    d1.merge({code:'ddd',under:"ccc",type:'ggg',id:4});
-}, 100)
-setTimeout(function () {
-    d1.merge({code:'aaa',under:"ccc",type:'ggg',id:5});
-}, 100)
-setTimeout(function () {
-    d1.merge({code:'aaa',under:"ccc",type:'ggg',id:6});
-}, 100)
+d1.merge({code:'aaa',under:"bbb",type:'ddd',id:1});
+// setTimeout(function () {
+//     d1.merge({code:'aaa',under:"bbb",type:'ddd',id:1});
+// }, 100)
+// setTimeout(function () {
+//     d1.merge({code:'aaa',under:"bbb",type:'fff',id:2});
+// }, 100)
+// setTimeout(function () {
+//     d1.merge({code:'aaa',under:"ccc",type:'eee',id:3});
+// }, 100)
+// setTimeout(function () {
+//     d1.merge({code:'ddd',under:"ccc",type:'ggg',id:4});
+// }, 100)
+// setTimeout(function () {
+//     d1.merge({code:'aaa',under:"ccc",type:'ggg',id:5});
+// }, 100)
+// setTimeout(function () {
+//     d1.merge({code:'aaa',under:"ccc",type:'ggg',id:6});
+// }, 100)
 
 // let d2 = new DataMerge();
 // d2.init({

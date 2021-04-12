@@ -1,6 +1,6 @@
 {
   "name": "datamerge",
-  "version": "0.0.11",
+  "version": "1.0.0",
   "description": "数据合并",
   "main": "index.js",
   "scripts": {
